@@ -22,15 +22,15 @@ void gpio_deinit(void);
 void gpio_set_mode(int gpio_port, int mode);
 
 static inline uint32_t gpio_read(const int gpio_port) {
-	return (*(gpio_mapped_addr+LEV_OFFSET) & (1 << gpio_port)) > LOW;
+    return (*(gpio_mapped_addr+LEV_OFFSET) & (1 << gpio_port)) > LOW;
 }
 
 static inline void gpio_write(const int gpio_port, const int value) {
-	if (value) { // value == HIGH
-		*(gpio_mapped_addr+SET_OFFSET) = 1 << gpio_port;
-	} else { // value == LOW
-		*(gpio_mapped_addr+CLR_OFFSET) = 1 << gpio_port;
-	}
+    if (value) { // value == HIGH
+        *(gpio_mapped_addr+SET_OFFSET) = 1 << gpio_port;
+    } else { // value == LOW
+        *(gpio_mapped_addr+CLR_OFFSET) = 1 << gpio_port;
+    }
 }
 
 #endif

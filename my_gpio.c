@@ -24,11 +24,11 @@ int gpio_init(void)
     char buffer[1024];
     char hardware[1024];
 	
-	// if the address is already mapped there is no point in re-evaluate it
-	if(gpio_mapped_addr != NULL)
-		return MY_GPIO_SUCCESS;
+    // if the address is already mapped there is no point in re-evaluate it
+    if(gpio_mapped_addr != NULL)
+        return MY_GPIO_SUCCESS;
 	
-	// Inspired by code in the RPi.GPIO library at:
+    // Inspired by code in the RPi.GPIO library at:
     // http://sourceforge.net/p/raspberry-gpio-python/
     // try /dev/gpiomem first since doesn't require root
     if ((mem_fd = open("/dev/gpiomem", O_RDWR|O_SYNC)) > 0)
@@ -84,11 +84,11 @@ int gpio_init(void)
 }
 
 void gpio_deinit(void) {
-	munmap(gpio_mapped_addr, GPIO_LENGTH);
+    munmap(gpio_mapped_addr, GPIO_LENGTH);
 }
 
 void gpio_set_mode(int gpio_port, int mode) {
-	*(gpio_mapped_addr+((gpio_port)/10)) &= ~(7<<(((gpio_port)%10)*3));
-	if (mode) // mode == OUTPUT
-		*(gpio_mapped_addr+((gpio_port)/10)) |=  (1<<(((gpio_port)%10)*3));
+    *(gpio_mapped_addr+((gpio_port)/10)) &= ~(7<<(((gpio_port)%10)*3));
+    if (mode) // mode == OUTPUT
+        *(gpio_mapped_addr+((gpio_port)/10)) |=  (1<<(((gpio_port)%10)*3));
 }
