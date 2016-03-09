@@ -12,6 +12,8 @@
 
 #define GPIO_LENGTH 4096
 
+volatile uint32_t *gpio_mapped_addr = NULL;
+
 int gpio_init(void)
 {
     int mem_fd;
@@ -21,6 +23,10 @@ int gpio_init(void)
     FILE *fp;
     char buffer[1024];
     char hardware[1024];
+	
+	// if the address is already mapped there is no point in re-evaluate it
+	if(gpio_mapped_addr != NULL)
+		return MY_GPIO_SUCCESS;
 	
 	// Inspired by code in the RPi.GPIO library at:
     // http://sourceforge.net/p/raspberry-gpio-python/

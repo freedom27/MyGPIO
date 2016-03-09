@@ -15,7 +15,7 @@
 #define CLR_OFFSET 10 
 #define LEV_OFFSET 13
 
-volatile uint32_t *gpio_mapped_addr;
+extern volatile uint32_t *gpio_mapped_addr;
 
 int gpio_init(void);
 void gpio_deinit(void);
