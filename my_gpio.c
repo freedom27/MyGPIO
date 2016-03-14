@@ -4,7 +4,10 @@
 #include <fcntl.h>
 #include <sys/mman.h>
 #include <string.h>
+
 #include "my_gpio.h"
+#include "my_utils.h"
+
 
 #define BCM2708_PERI_BASE   0x20000000
 #define BCM2709_PERI_BASE   0x3f000000
@@ -30,6 +33,7 @@ int gpio_init(void)
 	
     // Inspired by code in the RPi.GPIO library at:
     // http://sourceforge.net/p/raspberry-gpio-python/
+    
     // try /dev/gpiomem first since doesn't require root
     if ((mem_fd = open("/dev/gpiomem", O_RDWR|O_SYNC)) > 0)
     {
@@ -49,25 +53,14 @@ int gpio_init(void)
         }
         fclose(fp);
     } else {
-        if ((fp = fopen("/proc/cpuinfo", "r")) == NULL)
+        rpi_model model = get_rpi_model();
+        if (model == RPI_UNKNOWN) // Unable to infer the RPi model
             return MY_GPIO_FAILURE;
-
-        while(!feof(fp) && peri_base_addr == 0) {
-            fgets(buffer, sizeof(buffer), fp);
-            sscanf(buffer, "Hardware	: %s", hardware);
-            if (strcmp(hardware, "BCM2708") == 0 || strcmp(hardware, "BCM2835") == 0) {
-                // RPi 1
-                peri_base_addr = BCM2708_PERI_BASE;
-				break;
-            } else if (strcmp(hardware, "BCM2709") == 0 || strcmp(hardware, "BCM2836") == 0) {
-                // RP2 2
-                peri_base_addr = BCM2709_PERI_BASE;
-				break;
-            }
-        }
-        fclose(fp);
-        if (peri_base_addr == 0)
-            return MY_GPIO_FAILURE;
+        
+        if (model < RPI_2B_11 || model == RPI_ZERO_12) // RPi 1 or RPi Zero
+            peri_base_addr = BCM2708_PERI_BASE;
+        else //RPi 2 or RPi 3
+            peri_base_addr = BCM2709_PERI_BASE;
     }
 
     gpio_base_addr = peri_base_addr + GPIO_OFFSET;
