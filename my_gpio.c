@@ -24,8 +24,6 @@ int gpio_init(void)
     uint32_t gpio_base_addr = 0;
     unsigned char buf[4];
     FILE *fp;
-    char buffer[1024];
-    char hardware[1024];
 	
     // if the address is already mapped there is no point in re-evaluate it
     if(gpio_mapped_addr != NULL)
